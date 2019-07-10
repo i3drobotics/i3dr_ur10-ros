@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--XML-->
+<launch>
+    <!-- SETUP ARGUMENTS -->
+    <!-- enable/disable functions -->
+    <arg name="rviz" default="false" />
+    <arg name="calibrate" default="false"/>
+    <arg name="slam" default="false"/>
+    <arg name="ur10" default="true"/>
+    <arg name="slam_locate" default="false"/>
+    <!-- ur10 arguments -->
+    <arg name="robot_ip" default="10.42.0.238"/>
+    <arg name="moveit" default="false"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="camera_base_link"
+        args="0 0 0 0 0 0 tool0 deimos_base_link 1000" />
+
+    <!-- UR10 control launcher -->
+    <include if="$(arg ur10)" file="$(find i3dr_ur10)/launch/ur10.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+        <arg name="moveit" value="$(arg moveit)"/>
+    </include>
+
+    <!-- Deimos control launcher -->
+    <include file="$(find i3dr_deimos)/launch/deimos.launch">
+        <arg name="calibrate" value="$(arg calibrate)"/>
+        <arg name="slam" value="$(arg slam)"/>
+        <arg name="slam_locate" value="$(arg slam_locate)"/>
+    </include>
+
+    <!-- DISPLAY -->
+    <!-- run rviz with config file -->
+    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
+        args="-d $(find i3dr_deimos)/rviz/SLAM.rviz"/>
+
+</launch>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+
+  <name>i3dr_ur10</name>
+  <version>0.0.1</version>
+  <description>
+    Control package for i3dr devices and universal robots (UR10)
+  </description>
+
+  <maintainer email="bknight@i3drobotics.com">Ben Knight</maintainer>
+  <author email="bknight@i3drobotics.com">Ben Knight</author>
+  
+  <license>MIT</license>
+
+  <url type="website">http://i3drobotics.com/</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  <depend>message_filters</depend>
+  <depend>tf</depend>
+  <depend>message_generation</depend>
+
+</package>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="rviz" default="true"/>
+
+    <arg name="robot_ip" default="10.42.0.238"/>
+    
+    <include file="$(find ur_modern_driver)/launch/ur10_bringup.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+    </include>
+
+    <arg name="camera_name" default="deimos"/>
+    <arg name="camera_package_name" value="i3dr_$(arg camera_name)"/>
+    <arg name="launch_file" value="$(eval find(arg('camera_package_name')) + '/launch/' + arg('camera_name') + '.launch')"/>
+
+    <include file="$(arg launch_file)">
+        <arg name="rviz" value="false"/>
+    </include>
+
+    <!--<arg name="cam_robot_tf" default="-0.0475 0.0475 0 0, 0.0766334, -0.2682168, -0.9603057 "/>-->
+    <arg name="mount_robot_tf" default="-0.068265656 0.023249398 -0.016146827 0.001067 -0.0058921 0.9282864 -0.3718179"/>
+    <arg name="cam_robot_tf" default="0 -0.08 0 0 1 0 0"/>
+    <!--<arg name="aruco_robot_base_tf" default="0.5 0.024752 -0.20641 0 0 0 -1"/>-->
+
+    <node name="camera_robot_publisher" pkg="tf" type="static_transform_publisher" args="$(arg mount_robot_tf) tool0 tri_mount 100" />
+    <node name="camera_robot_publisher_2" pkg="tf" type="static_transform_publisher" args="$(arg cam_robot_tf) tri_mount deimos_base_link 100" />
+
+
+    <!--<node name="i3dr_hand_eye" pkg="i3dr_ur10" type="i3dr_hand_eye" output="screen">
+        <param name="camera_namespace" type="string" value="$(arg camera_name)"/>
+        <param name="camera_base_frame" type="string" value="$(arg camera_name)_base_link"/>
+        <param name="camera_frame" type="string" value="$(arg camera_name)_depth_optical_frame"/>
+        <param name="world_frame" type="string" value="world"/>
+        <param name="arm_tooltip_frame" type="string" value="tool0"/>
+        <param name="arm_base_frame" type="string" value="base_link"/>
+        <param name="publish_aruco_tf" type="bool" value="true"/>
+        <param name="image_flipped" type="bool" value="false"/>
+
+        <param name="camera_mounted_on_robot" type="bool" value="false"/>
+    </node>-->
+
+    <node name="i3dr_ur10_scan" pkg="i3dr_ur10" type="i3dr_ur10_scan.py" output="screen">
+        <param name="scan_type" type="string" value="sample"/>
+        <param name="ur10_move_time" type="int" value="10"/>
+        <param name="ur10_pose_pause" type="int" value="3"/>
+    </node>
+
+    <node name="i3dr_ur10_scan_gui" pkg="i3dr_ur10" type="i3dr_ur10_scan_gui.py" output="screen">
+        <remap from="left/image_raw" to="$(arg camera_name)/left/image_raw"/>
+        <remap from="right/image_raw" to="$(arg camera_name)/right/image_raw"/>
+        <remap from="disparity" to="$(arg camera_name)/disparity"/>
+    </node>
+ 
+    <!-- DISPLAY -->
+    <!-- run rviz with config file -->
+    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
+        args="-d $(find i3dr_ur10)/rviz/ur10_triclops.rviz"/>
+</launch>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--XML-->
+<launch>
+    <!-- UR10 control launcher -->
+    <arg name="robot_ip" default="10.42.0.238"/>
+    <arg name="moveit" default="false"/>
+
+    <include file="$(find ur_modern_driver)/launch/ur10_bringup.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+    </include>
+
+    <include if="$(arg moveit)" file="$(find ur10_moveit_config)/launch/ur10_moveit_planning_execution.launch">
+        <arg name="limited" value="true"/>
+    </include>
+
+    <include if="$(arg moveit)" file="$(find ur10_moveit_config)/launch/moveit_rviz.launch">
+        <arg name="config" value="true"/>
+    </include>
+
+</launch>

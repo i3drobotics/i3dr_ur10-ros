@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2019, I3D Robotics Ltd.
+-->
+
+<robot name="aruco_scene" 
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!--<xacro:include filename="$(find i3dr_ur10)/urdf/aruco_marker.urdf.xacro" />-->
+    <xacro:include filename="$(find i3dr_stereo_camera)/urdf/i3dr_stereo_camera.urdf.xacro" />
+
+    <xacro:i3dr_stereo_camera camera_name="phobos_nuclear" baseline="0.25" toe_in_r="7" toe_in_l="0" width="0.05" height="0.3" length="0.05" image_width="1920" image_height="1080" image_format="MONO8" hfov="1.04" focus_near="0.3" r="0.1" g="0.1" b="0.1" />
+
+    <!--<xacro:aruco_marker name="test" size="0.05" />-->
+    <link name="test_aruco_marker"/>
+
+    <joint name="world_aruco_joint" type="floating">
+        <parent link="phobos_nuclear_depth_optical_frame"/>
+        <child link="test_aruco_marker"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+</robot>
