@@ -9,7 +9,7 @@
             args="record -o '$(arg folder_name)/i3dr_ROS_room_scan' /tf /tf_static /joint_states /$(arg camera_name)/left/image_raw /$(arg camera_name)/left/camera_info /$(arg camera_name)/right/image_raw /$(arg camera_name)/right/camera_info"/>
     </group>
     <group unless="$(arg record)">
-        <arg name="bag_name" default="i3dr_ROS_room_scan_2019-07-04-15-45-00[Light_on-Laser_on]"/>
+        <arg name="bag_name" default="i3dr_ROS_room_scan_2019-07-04-14-24-33[Light_on-Laser_off(Failed at end)]"/>
         <arg name="rviz" default="true"/>
 
         <param name="use_sim_time" value="true"/>
@@ -39,15 +39,13 @@
             <arg name="uniqueness_ratio" value="6" />
             <arg name="speckle_range" value="4" />
             <arg name="speckle_size" value="1000" />
-            
 
             <!-- SGBM Settings -->
-            <!--
-            <arg name="camera_namespace" value="$(arg camera_name)"/>
+            <!--<arg name="camera_namespace" value="$(arg camera_name)"/>
             <arg name="gui" value="false"/>
             <arg name="stereo_algorithm" value="1" />
             <arg name="min_disparity" value="159" />
-            <arg name="disparity_range" value="480" />
+            <arg name="disparity_range" value="416" />
             <arg name="correlation_window_size" value="19" />
             <arg name="uniqueness_ratio" value="20" />
             <arg name="texture_threshold" value="100" />
@@ -84,45 +82,25 @@
         <!-- ROS BAG -->
         <node pkg="rosbag" type="play" name="rosbag_play_SBRI_scan" 
             args="--clock -r 1 '$(arg folder_name)/$(arg bag_name).bag'"/>
+
+        <!-- RTABMAP -->
+        <arg name="localization" default="false"/>
+        <include file="$(find i3dr_rtabmap)/launch/stereo_localisation.launch">
+            <arg name="localization" value="$(arg localization)"/>
+            <arg name="camera_namespace" value="$(arg camera_name)"/>
+            <arg name="depth_odom" value="true"/>
+            <!--<arg name="scan3d_odom" value="true"/>-->
+            <!--<arg name="depth_icp_odom" value="true"/>-->
+            <arg name="disparity2Depth" default="true"/>
+            <arg name="rgb_topic" value="/$(arg camera_name)/left/image_rect_color"/>
+            <arg name="camera_info_topic" value="/$(arg camera_name)/left/camera_info"/>
+            <arg name="depth_camera_info_topic" value="/$(arg camera_name)/left/camera_info"/>
+            <arg name="cloud_topic" value="/$(arg camera_name)/i3dr_points2"/>
+            <arg name="base_link_frame" value="$(arg camera_name)_base_link"/>
+            <!-- should be set to true if using SGBM or Phobos/Phobos_nuclear as these takes longer to process -->
+            <arg name="slow_processing" default="true"/>
+        </include>
         
-        <!-- GLUING -->
-        <!-- Transfom point cloud to world frame -->
-        <node name="transform_pcl_frame" pkg="i3dr_pcl_tools" type="transform_pcl_frame" output="screen" >
-            <param name="pcl2_input" type="string" value="/phobos_nuclear/i3dr_points2" />
-            <param name="pcl2_output" type="string" value="/phobos_nuclear/world_points2" />
-            <param name="pcl_output" type="string" value="/phobos_nuclear/world_points" />
-            <param name="tf" type="string" value="/world" />
-        </node>
-        <!-- Crop point cloud -->
-        <node name="crop_pcl" pkg="i3dr_pcl_tools" type="crop_pcl" output="screen" >
-            <param name="pcl2_input" type="string" value="/phobos_nuclear/world_points2" />
-            <param name="pcl2_output" type="string" value="/phobos_nuclear/cropped_points2" />
-            <param name="pcl_output" type="string" value="/phobos_nuclear/cropped_points" />
-            <param name="minX" type="double" value="-6" />
-            <param name="maxX" type="double" value="6" />
-            <param name="minY" type="double" value="-6" />
-            <param name="maxY" type="double" value="6" />
-            <param name="minZ" type="double" value="-6" />
-            <param name="maxZ" type="double" value="6" />
-        </node>
-
-        <!--
-        <node name="load_pcl" pkg="i3dr_pcl_tools" type="load_pcl" output="screen" >
-            <param name="pcl_filepath" value="/home/i3dr/Desktop/i3dr_ROS_room_scan_2019-07-04-15-45-00[Light_on-Laser_on](1cm)(block).ply"/>
-            <param name="pcl2_output" value="/phobos_nuclear/map_points2"/>
-            <param name="point_cloud_frame_id" value="/world"/>
-            <param name="rate" value="1"/>
-        </node>
-        -->
-
-        <!-- Add point  cloud to map point cloud -->
-        <node name="pcl_map" pkg="i3dr_pcl_tools" type="pcl_map" output="screen" >
-            <param name="resolution" type="double" value="0.01" />
-            <param name="pcl2_input" type="string" value="/phobos_nuclear/cropped_points2" />
-            <param name="pcl2_output" type="string" value="/phobos_nuclear/map_points2" />
-            <param name="pcl_output" type="string" value="/phobos_nuclear/map_points" />
-        </node>
-
     </group>
 
 </launch>
