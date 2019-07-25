@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 
 <launch>
-    <arg name="rviz" default="true"/>
-    <arg name="record_bag" default="true"/>
-    <arg name="slam" default="false"/>
+    <arg name="rviz" default="true" />
+    <arg name="gui" default="true"/>
 
     <arg name="robot_ip" default="10.42.0.238"/>
     
@@ -12,19 +11,14 @@
     </include>
 
     <arg name="camera_name" default="phobos_nuclear"/>
-    <arg name="camera_package_name" value="i3dr_$(arg camera_name)"/>
-    <arg name="launch_file" value="$(eval find(arg('camera_package_name')) + '/launch/' + arg('camera_name') + '.launch')"/>
-
-    <include file="$(arg launch_file)">
-        <arg name="rviz" value="false"/>
-    </include>
     
     <!--<arg name="cam_robot_tf" default="-0.0475 0.0475 0 0, 0.0766334, -0.2682168, -0.9603057 "/>-->
-    <arg name="cam_robot_tf" default="0.04 0 0 0 0 1 0"/>
+    <arg name="cam_robot_tf" default="0.045 0 0 0 0 1 0"/>
     <!--<arg name="aruco_robot_base_tf" default="0.5 0.024752 -0.20641 0 0 0 -1"/>-->
 
     <node name="camera_robot_publisher" pkg="tf" type="static_transform_publisher" args="$(arg cam_robot_tf) tool0 $(arg camera_name)_base_link 100" />
 
+    <!--<node name="camera_robot_publisher" pkg="tf" type="static_transform_publisher" args="$(arg cam_robot_tf) map tool0 100" />-->
 
     <!--<node name="i3dr_hand_eye" pkg="i3dr_ur10" type="i3dr_hand_eye" output="screen">
         <param name="camera_namespace" type="string" value="$(arg camera_name)"/>
@@ -39,13 +33,14 @@
         <param name="camera_mounted_on_robot" type="bool" value="false"/>
     </node>-->
 
-   <node name="i3dr_ur10_scan" pkg="i3dr_ur10" type="i3dr_ur10_scan.py" output="screen">
-        <param name="scan_type" type="string" value="room"/>
-        <param name="ur10_move_time" type="int" value="20"/>
-        <param name="ur10_pose_pause" type="int" value="0"/>
+   <node name="i3dr_ur10_scan" pkg="i3dr_ur10" type="i3dr_ur10_scan2.py" output="screen">
+        <param name="scan_type" type="string" value="sample"/>
+        <param name="ur10_move_time" type="int" value="5"/>
+        <param name="ur10_pose_pause" type="int" value="2"/>
+        <param name="rtabmap_namespace" type="string" value="$(arg camera_name)"/>
     </node>
 
-    <node name="i3dr_ur10_scan_gui" pkg="i3dr_ur10" type="i3dr_ur10_scan_gui.py" output="screen">
+    <node if="$(arg gui)" name="i3dr_ur10_scan_gui" pkg="i3dr_ur10" type="i3dr_ur10_scan_gui.py" output="screen">
         <remap from="left/image_raw" to="$(arg camera_name)/left/image_raw"/>
         <remap from="right/image_raw" to="$(arg camera_name)/right/image_raw"/>
         <remap from="disparity" to="$(arg camera_name)/disparity"/>
@@ -54,5 +49,7 @@
     <!-- DISPLAY -->
     <!-- run rviz with config file -->
     <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
-        args="-d $(find i3dr_ur10)/rviz/ur10_phobos_nuclear.rviz"/>
+        args="-d $(find i3dr_ur10)/rviz/ur10_sbri.rviz">
+        <!--<remap from="rtabmap/get_map_data" to="$(arg camera_name)/get_map_data"/>-->
+    </node>
 </launch>

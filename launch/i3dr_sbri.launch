@@ -1,7 +1,0 @@
-<launch>
-
-    <include file="$(find i3dr_phobos_nuclear)/launch/phobos_nuclear.launch"/>
-    <include file="$(find i3dr_rtabmap)/launch/standalone_rtabmap.launch"/>
-    <include file="$(find i3dr_ur10)/launch/ur10_SBRI_scan2.launch"/>
-
-</launch>
