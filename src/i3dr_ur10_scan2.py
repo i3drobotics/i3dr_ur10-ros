@@ -10,6 +10,7 @@ import actionlib
 import rospy
 import time
 import roslib
+import rosservice
 roslib.load_manifest('ur_driver')
 
 JOINT_NAMES = ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
@@ -22,6 +23,8 @@ scan_pose_index = 0
 
 rtabmap_namespace = "rtabmap"
 
+rtabmap_pause = False
+
 move_UR10 = False
 loop_scan = False
 UR10_MOVE_HOME_POSE = 0
@@ -33,95 +36,102 @@ move_pose = UR10_MOVE_HOME_POSE
 pub_i3dr_scan_status = rospy.Publisher('i3dr_scan_status', String, queue_size=10)
 
 ## RTABMAP ##
+# ------------------------------------- #
+
+def rtabmap_service_exists():
+    global rtabmap_namespace
+    service_list = rosservice.get_service_list()
+    reset_odom_service = '/'+rtabmap_namespace+'/reset_odom'
+    if (reset_odom_service in service_list):
+        return True
+    else:
+        return False
 
 def rtabmap_reset_odom():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/reset_odom')
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/reset_odom', timeout=2)
         srv_reset_odom = rospy.ServiceProxy('/'+rtabmap_namespace+'/reset_odom', Empty)
         srv_reset_odom()
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
 def rtabmap_new_map():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/trigger_new_map')
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/trigger_new_map', timeout=2)
         srv_new_map = rospy.ServiceProxy('/'+rtabmap_namespace+'/trigger_new_map', Empty)
         srv_new_map()
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
 def rtabmap_reset():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/reset')
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/reset',timeout=2)
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/reset', Empty)
         srv_reset()
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
 def rtabmap_pause():
     global rtabmap_namespace
     print "Pausing rtabmap with service: /"+rtabmap_namespace+"/pause"
-    rospy.wait_for_service('/'+rtabmap_namespace+'/pause')
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/pause',timeout=2)
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/pause', Empty)
         srv_reset()
         print "Rtabmap service complete: /"+rtabmap_namespace+"/pause"
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
 def rtabmap_pause_odom():
     global rtabmap_namespace
     print "Pausing rtabmap with service: /"+rtabmap_namespace+"/pause_odom"
-    rospy.wait_for_service('/'+rtabmap_namespace+'/pause_odom')
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/pause_odom',timeout=2)
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/pause_odom', Empty)
         srv_reset()
         print "Rtabmap service complete: /"+rtabmap_namespace+"/pause_odom"
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
 def rtabmap_resume():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/resume')
+    rospy.wait_for_service('/'+rtabmap_namespace+'/resume',timeout=2)
     try:
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/resume', Empty)
         srv_reset()
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
 def rtabmap_resume_odom():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/resume_odom')
+    rospy.wait_for_service('/'+rtabmap_namespace+'/resume_odom',timeout=2)
     try:
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/resume_odom', Empty)
         srv_reset()
     except rospy.ServiceException, e:
-        print "Service call failed: %s" % e
+        rospy.logerr("Service call failed: %s",e)
+    except rospy.ROSException, e:
+        rospy.logerr("Service call failed: %s",e)
 
-##---------##
+# ------------------------------------- #
 
-def deg_to_rad(deg):
-    rad = deg * (3.14/180)
-    return(rad)
-    
-def rad_to_deg(rad):
-    deg = rad * (180/3.14)
-    return(deg)
-
-def joints_deg_to_rad(joints_deg):
-    joints_rad = []
-    for j in joints_deg:
-        joints_rad.append(deg_to_rad(j))
-    return(joints_rad)
-
-def joints_rad_to_deg(joints_rad):
-    joints_deg = []
-    for j in joints_rad:
-        joints_deg.append(rad_to_deg(j))
-    return(joints_deg)
+# HANDLE SERVICE CALLS
+# ------------------------------------- #
 
 def handle_i3dr_scan_next_pose(req):
     global move_UR10, move_pose, UR10_MOVE_NEXT_POSE
@@ -161,6 +171,45 @@ def handle_i3dr_scan_cancel_pose(req):
     print("request to cancel movement")
     ur_move_cancel()
     return EmptyResponse()
+
+def handle_i3dr_reset_map(req):
+    print("request to reset map")
+    rtabmap_new_map()
+    rtabmap_reset()
+    rtabmap_reset_odom()
+    return EmptyResponse()
+
+def handle_i3dr_pause_map(req):
+    global rtabmap_pause
+    print("request to pause map")
+    rtabmap_pause = True
+
+def handle_i3dr_resume_map(req):
+    global rtabmap_pause
+    print("request to resume map")
+    rtabmap_pause = False
+
+# ------------------------------------- #
+
+def deg_to_rad(deg):
+    rad = deg * (3.14/180)
+    return(rad)
+    
+def rad_to_deg(rad):
+    deg = rad * (180/3.14)
+    return(deg)
+
+def joints_deg_to_rad(joints_deg):
+    joints_rad = []
+    for j in joints_deg:
+        joints_rad.append(deg_to_rad(j))
+    return(joints_rad)
+
+def joints_rad_to_deg(joints_rad):
+    joints_deg = []
+    for j in joints_rad:
+        joints_deg.append(rad_to_deg(j))
+    return(joints_deg)
 
 def ur_move_deg(UR_Joints,time_to_pose):
     print "moving to position"
@@ -222,15 +271,17 @@ def ur_move_home():
     print joints_home
     scan_pose_index = 0
 
-    rtabmap_pause()
-    rtabmap_pause_odom()
+    if (rtabmap_pause):
+        rtabmap_pause()
+        rtabmap_pause_odom()
 
     ur_move(joints_deg_to_rad(joints_home),ur10_move_time*2)
 
     time.sleep(ur10_pose_pause)
-    rtabmap_resume()
-    rtabmap_resume_odom()
-    time.sleep(ur10_pose_pause)
+    if (rtabmap_pause):
+        rtabmap_resume()
+        rtabmap_resume_odom()
+        time.sleep(ur10_pose_pause)
 
 def ur_move_fold():
     global joints_fold, scan_pose_index, ur10_move_time
@@ -239,8 +290,9 @@ def ur_move_fold():
     print joints_fold
     scan_pose_index = 0
 
-    rtabmap_pause()
-    rtabmap_pause_odom()
+    if (rtabmap_pause):
+        rtabmap_pause()
+        rtabmap_pause_odom()
 
     ur_move(joints_deg_to_rad(joints_fold),ur10_move_time*2)
 
@@ -253,8 +305,9 @@ def ur_move_scan_next_pose():
     print joints
     time_to_pose = ur10_move_time
 
-    rtabmap_pause()
-    rtabmap_pause_odom()
+    if (rtabmap_pause):
+        rtabmap_pause()
+        rtabmap_pause_odom()
 
     ur_move(joints_deg_to_rad(joints),time_to_pose)
 
@@ -265,9 +318,10 @@ def ur_move_scan_next_pose():
         scan_pose_index = 0
 
     time.sleep(ur10_pose_pause)
-    rtabmap_resume()
-    rtabmap_resume_odom()
-    time.sleep(ur10_pose_pause)
+    if (rtabmap_pause):
+        rtabmap_resume()
+        rtabmap_resume_odom()
+        time.sleep(ur10_pose_pause)
 
 def ur_move_scan_continuous():
     global SCAN_JOINTS, move_UR10, loop_scan, ur10_pose_pause, ur10_move_time
@@ -279,15 +333,17 @@ def ur_move_scan_continuous():
             print j
             pub_i3dr_scan_status.publish("moving to next scan position...")
 
-            rtabmap_pause()
-            rtabmap_pause_odom()
+            if (rtabmap_pause):
+                rtabmap_pause()
+                rtabmap_pause_odom()
 
             ur_move(joints_deg_to_rad(j),time_to_pose)
 
             time.sleep(ur10_pose_pause)
-            rtabmap_resume()
-            rtabmap_resume_odom()
-            time.sleep(ur10_pose_pause)
+            if (rtabmap_pause):
+                rtabmap_resume()
+                rtabmap_resume_odom()
+                time.sleep(ur10_pose_pause)
 
             if not loop_scan:
                 break
@@ -405,15 +461,16 @@ def main():
         print "This program makes the robot move to scan the environment"
         print "Please make sure that your robot can move freely between these poses before proceeding!"
         rate = rospy.Rate(100)
-        print "Checking rtabmap services"
+        print "Setting up rtabmap"
         rtabmap_new_map()
         rtabmap_reset()
         rtabmap_reset_odom()
         pub_i3dr_scan_status.publish("ready")
         print "Ready"
         while not rospy.is_shutdown():
-            rtabmap_pause()
-            rtabmap_pause_odom()
+            if (rtabmap_pause):
+                rtabmap_pause()
+                rtabmap_pause_odom()
             control_UR10()
             rate.sleep()
     except KeyboardInterrupt:
