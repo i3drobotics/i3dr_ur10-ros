@@ -4,7 +4,7 @@
     <arg name="rviz" default="true" />
     <arg name="gui" default="true"/>
 
-    <arg name="robot_ip" default="10.42.0.238"/>
+    <arg name="robot_ip" default="192.168.1.164"/>
     
     <include file="$(find ur_modern_driver)/launch/ur10_bringup.launch">
         <arg name="robot_ip" value="$(arg robot_ip)"/>
@@ -13,7 +13,7 @@
     <arg name="camera_name" default="phobos_nuclear"/>
     
     <!--<arg name="cam_robot_tf" default="-0.0475 0.0475 0 0, 0.0766334, -0.2682168, -0.9603057 "/>-->
-    <arg name="cam_robot_tf" default="0.045 0 0 0 0 1 0"/>
+    <arg name="cam_robot_tf" default="0 0 0 0 0 1 0"/>
     <!--<arg name="aruco_robot_base_tf" default="0.5 0.024752 -0.20641 0 0 0 -1"/>-->
 
     <node name="camera_robot_publisher" pkg="tf" type="static_transform_publisher" args="$(arg cam_robot_tf) tool0 $(arg camera_name)_base_link 100" />
@@ -34,9 +34,9 @@
     </node>-->
 
    <node name="i3dr_ur10_scan" pkg="i3dr_ur10" type="i3dr_ur10_scan2.py" output="screen">
-        <param name="scan_type" type="string" value="sample"/>
-        <param name="ur10_move_time" type="int" value="5"/>
-        <param name="ur10_pose_pause" type="int" value="2"/>
+        <param name="rtabmap_en" type="bool" value="false"/>
+        <param name="ur10_move_time" type="int" value="3"/>
+        <param name="ur10_pose_pause" type="int" value="0"/>
         <param name="rtabmap_namespace" type="string" value="$(arg camera_name)"/>
     </node>
 

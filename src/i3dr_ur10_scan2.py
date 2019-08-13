@@ -21,8 +21,8 @@ joints_home = []
 client = None
 scan_pose_index = 0
 
+rtabmap_enable = True
 rtabmap_namespace = "rtabmap"
-
 rtabmap_pause = False
 
 move_UR10 = False
@@ -108,8 +108,8 @@ def rtabmap_pause_odom():
 
 def rtabmap_resume():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/resume',timeout=2)
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/resume',timeout=2)
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/resume', Empty)
         srv_reset()
     except rospy.ServiceException, e:
@@ -119,8 +119,8 @@ def rtabmap_resume():
 
 def rtabmap_resume_odom():
     global rtabmap_namespace
-    rospy.wait_for_service('/'+rtabmap_namespace+'/resume_odom',timeout=2)
     try:
+        rospy.wait_for_service('/'+rtabmap_namespace+'/resume_odom',timeout=2)
         srv_reset = rospy.ServiceProxy('/'+rtabmap_namespace+'/resume_odom', Empty)
         srv_reset()
     except rospy.ServiceException, e:
@@ -271,17 +271,19 @@ def ur_move_home():
     print joints_home
     scan_pose_index = 0
 
-    if (rtabmap_pause):
-        rtabmap_pause()
-        rtabmap_pause_odom()
+    if (rtabmap_enable):
+        if (rtabmap_pause):
+            rtabmap_pause()
+            rtabmap_pause_odom()
 
     ur_move(joints_deg_to_rad(joints_home),ur10_move_time*2)
 
     time.sleep(ur10_pose_pause)
-    if (rtabmap_pause):
-        rtabmap_resume()
-        rtabmap_resume_odom()
-        time.sleep(ur10_pose_pause)
+    if (rtabmap_enable):
+        if (rtabmap_pause):
+            rtabmap_resume()
+            rtabmap_resume_odom()
+            time.sleep(ur10_pose_pause)
 
 def ur_move_fold():
     global joints_fold, scan_pose_index, ur10_move_time
@@ -290,9 +292,10 @@ def ur_move_fold():
     print joints_fold
     scan_pose_index = 0
 
-    if (rtabmap_pause):
-        rtabmap_pause()
-        rtabmap_pause_odom()
+    if (rtabmap_enable):
+        if (rtabmap_pause):
+            rtabmap_pause()
+            rtabmap_pause_odom()
 
     ur_move(joints_deg_to_rad(joints_fold),ur10_move_time*2)
 
@@ -305,9 +308,10 @@ def ur_move_scan_next_pose():
     print joints
     time_to_pose = ur10_move_time
 
-    if (rtabmap_pause):
-        rtabmap_pause()
-        rtabmap_pause_odom()
+    if (rtabmap_enable):
+        if (rtabmap_pause):
+            rtabmap_pause()
+            rtabmap_pause_odom()
 
     ur_move(joints_deg_to_rad(joints),time_to_pose)
 
@@ -318,10 +322,11 @@ def ur_move_scan_next_pose():
         scan_pose_index = 0
 
     time.sleep(ur10_pose_pause)
-    if (rtabmap_pause):
-        rtabmap_resume()
-        rtabmap_resume_odom()
-        time.sleep(ur10_pose_pause)
+    if (rtabmap_enable):
+        if (rtabmap_pause):
+            rtabmap_resume()
+            rtabmap_resume_odom()
+            time.sleep(ur10_pose_pause)
 
 def ur_move_scan_continuous():
     global SCAN_JOINTS, move_UR10, loop_scan, ur10_pose_pause, ur10_move_time
@@ -332,18 +337,20 @@ def ur_move_scan_continuous():
         for c,j in enumerate(SCAN_JOINTS):
             print j
             pub_i3dr_scan_status.publish("moving to next scan position...")
-
-            if (rtabmap_pause):
-                rtabmap_pause()
-                rtabmap_pause_odom()
+            
+            if (rtabmap_enable):
+                if (rtabmap_pause):
+                    rtabmap_pause()
+                    rtabmap_pause_odom()
 
             ur_move(joints_deg_to_rad(j),time_to_pose)
 
             time.sleep(ur10_pose_pause)
-            if (rtabmap_pause):
-                rtabmap_resume()
-                rtabmap_resume_odom()
-                time.sleep(ur10_pose_pause)
+            if (rtabmap_enable):
+                if (rtabmap_pause):
+                    rtabmap_resume()
+                    rtabmap_resume_odom()
+                    time.sleep(ur10_pose_pause)
 
             if not loop_scan:
                 break
@@ -416,7 +423,7 @@ def control_UR10():
             ur_move_scan_continuous()
 
 def main():
-    global client, SCAN_JOINTS, joints_home, ur10_move_time, ur10_pose_pause, rtabmap_namespace
+    global client, SCAN_JOINTS, joints_home, ur10_move_time, ur10_pose_pause, rtabmap_namespace, rtabmap_enable
     try:
         rospy.init_node("i3dr_ur10_sample_scan", anonymous=True, disable_signals=True)
         srv_i3dr_scan_next_pose = rospy.Service('i3dr_scan_next_pose', Empty, handle_i3dr_scan_next_pose)
@@ -425,26 +432,19 @@ def main():
         srv_i3dr_scan_continuous = rospy.Service('i3dr_scan_continuous', Empty, handle_i3dr_scan_continuous)
         srv_i3dr_scan_cancel_pose = rospy.Service('i3dr_scan_cancel_pose', Empty, handle_i3dr_scan_cancel_pose)
 
-        scan_type = rospy.get_param('~scan_type', 'room')
+        rtabmap_enable = rospy.get_param('~rtabmap_en', True)
         ur10_move_time = rospy.get_param('~ur10_move_time', 10)
         ur10_pose_pause = rospy.get_param('~ur10_pose_pause', 0)
         rtabmap_namespace = rospy.get_param('~rtabmap_namespace', "rtabmap")
-        print scan_type
 
-        if (scan_type == 'room'):
-            joints_home = [0, -140, 90, -40, 0, 180]
-            SCAN_JOINTS = generate_scan_joints(joints_home,30,20)
-            #joints_home_rot = [180, -140, 90, -40, 0, 180]
-            #SCAN_JOINTS_rot = generate_scan_joints(joints_home_rot,30,20)
-            #SCAN_JOINTS.extend(SCAN_JOINTS_rot)
-        elif (scan_type == 'sample'):
-            joints_home = [0, -140, 90, -40, -90, 180]
-            for j in range (180,270,5):
-                SCAN_JOINTS.append([0, -140, 90, -40, -90, j])
-            for j in range (270,90,-5):
-                SCAN_JOINTS.append([0, -140, 90, -40, -90, j])
-            for j in range (90,180,5):
-                SCAN_JOINTS.append([0, -140, 90, -40, -90, j])
+        # setup joints for map
+        joints_home = [0, -70, -80, -120, 90, 180]
+        for j in range (180,270,5):
+            SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+        for j in range (270,90,-5):
+            SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+        for j in range (90,180,5):
+            SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
 
         client = actionlib.SimpleActionClient(
             'follow_joint_trajectory', FollowJointTrajectoryAction)
@@ -461,16 +461,18 @@ def main():
         print "This program makes the robot move to scan the environment"
         print "Please make sure that your robot can move freely between these poses before proceeding!"
         rate = rospy.Rate(100)
-        print "Setting up rtabmap"
-        rtabmap_new_map()
-        rtabmap_reset()
-        rtabmap_reset_odom()
+        if (rtabmap_enable):
+            print "Setting up rtabmap"
+            rtabmap_new_map()
+            rtabmap_reset()
+            rtabmap_reset_odom()
         pub_i3dr_scan_status.publish("ready")
         print "Ready"
         while not rospy.is_shutdown():
-            if (rtabmap_pause):
-                rtabmap_pause()
-                rtabmap_pause_odom()
+            if (rtabmap_enable):
+                if (rtabmap_pause):
+                    rtabmap_pause()
+                    rtabmap_pause_odom()
             control_UR10()
             rate.sleep()
     except KeyboardInterrupt:
