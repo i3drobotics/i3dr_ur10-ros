@@ -165,12 +165,16 @@ class UR10Automap:
         try:
             rospy.wait_for_service('/'+self.rtabmap_namespace+'/get_map', timeout=2)
             srv_get_map = rospy.ServiceProxy('/'+self.rtabmap_namespace+'/get_map', GetMap)
+            get_map = GetMapRequest(True,True,False)
+            print(get_map)
             # request map and wait for response
-            resp = srv_get_map(True,True)
+            resp = srv_get_map(get_map)
         except rospy.ServiceException, e:
             rospy.logerr("Service call failed: %s",e)
         except rospy.ROSException, e:
             rospy.logerr("Service call failed: %s",e)
+        except:
+            rospy.logerr("Service call failed: Unknown error")
 
     def rtabmap_reset_odom(self):
         try:
@@ -255,7 +259,7 @@ class UR10Automap:
     # ------------------------------------- #
 
     def handle_i3dr_scan_send_map(self,req):
-        self.rtabmap_get_map()
+        #self.rtabmap_get_map() #TODO fix issue with get map (md5sum)
         if (self.rtabmap_cloud):
             self.pub_i3dr_scan_map.publish(self.rtabmap_cloud)
         else:

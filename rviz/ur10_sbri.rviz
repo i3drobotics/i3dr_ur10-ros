@@ -8,7 +8,6 @@ Panels:
         - /Phobos Nuclear Model1
         - /TF1
         - /PointCloud2Map1
-        - /PointCloud2Map1/Status1
       Splitter Ratio: 0.681908548
     Tree Height: 320
   - Class: rviz/Selection
@@ -56,66 +55,18 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ee_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        forearm_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        shoulder_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        tool0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        upper_arm_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_1_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_2_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_3_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: Universal Robot Model
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Alpha: 0.699999988
       Class: rviz/RobotModel
@@ -336,7 +287,28 @@ Visualization Manager:
       Tree:
         map:
           odom:
-            {}
+            phobos_nuclear_base_link:
+              phobos_nuclear_center:
+                phobos_nuclear_cameraLeft:
+                  phobos_nuclear_cameraLeft_optical:
+                    phobos_nuclear_depth_optical_frame:
+                      {}
+                  phobos_nuclear_cameraLeft_sim:
+                    {}
+                phobos_nuclear_cameraRight:
+                  phobos_nuclear_cameraRight_optical:
+                    {}
+              phobos_nuclear_interface_plate_link:
+                phobos_nuclear_camerabar_link:
+                  {}
+              phobos_nuclear_mount_point_1:
+                {}
+              phobos_nuclear_mount_point_2:
+                {}
+              phobos_nuclear_mount_point_3:
+                {}
+              phobos_nuclear_mount_point_4:
+                {}
       Update Interval: 0
       Value: true
     - Class: rviz/Image
@@ -443,7 +415,7 @@ Visualization Manager:
       Max Intensity: 4096
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: PointCloud2Map
+      Name: PointCloud2RTABMAP
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
@@ -451,6 +423,36 @@ Visualization Manager:
       Size (m): 0.00999999978
       Style: Points
       Topic: /rtabmap/cloud_map
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: ""
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2Map
+      Position Transformer: ""
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.00999999978
+      Style: Points
+      Topic: /i3dr_scan_map
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -480,25 +482,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.40209818
+      Distance: 9.13347054
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.66003311
-        Y: 0.0235555619
-        Z: -0.136548281
+        X: -1.30183935
+        Y: 0.120823547
+        Z: -0.382423371
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.545203686
+      Pitch: 0.660204828
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.235779107
+      Yaw: 6.26896143
     Saved: ~
 Window Geometry:
   Depth:
