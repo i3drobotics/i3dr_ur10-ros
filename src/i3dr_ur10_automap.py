@@ -259,7 +259,7 @@ class UR10Automap:
 
     def handle_i3dr_scan_send_map(self,req):
         print("request to send latest map")
-        self.rtabmap_get_map() #TODO fix issue with get map (md5sum)
+        self.rtabmap_get_map()
         if (self.rtabmap_cloud):
             self.pub_i3dr_scan_map.publish(self.rtabmap_cloud)
         else:
