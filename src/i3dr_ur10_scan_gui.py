@@ -113,6 +113,9 @@ class GtkHandler:
 	def btnCancelPose_onClicked(self, button):
 		self.emptySrvClient("i3dr_scan_cancel_pose")
 
+	def btnSendMap_onClicked(self, button):
+		self.emptySrvClient("i3dr_scan_send_map")
+
 	def emptySrvClient(self, srv_name):
 		if not rospy.is_shutdown():
 			print "sending service call"

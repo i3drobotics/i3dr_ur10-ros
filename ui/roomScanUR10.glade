@@ -109,6 +109,20 @@
                         <property name="position">4</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkButton" id="btnSendMap">
+                        <property name="label" translatable="yes">Send Map</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="btnSendMap_onClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">5</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
