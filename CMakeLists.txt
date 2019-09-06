@@ -3,7 +3,7 @@ set (CMAKE_CXX_STANDARD 11)
 project(i3dr_ur10)
 
 find_package(catkin REQUIRED COMPONENTS
-                roscpp std_msgs tf rospy std_srvs cv_bridge image_transport message_filters message_generation
+                roscpp std_msgs tf rospy std_srvs cv_bridge image_transport message_filters message_generation sensor_msgs rtabmap_ros
             ) 
 find_package(OpenCV REQUIRED)
 
@@ -25,3 +25,5 @@ target_link_libraries(
 	${catkin_LIBRARIES}
 	${OpenCV_LIBRARIES}
 )
+
+catkin_install_python(PROGRAMS src/i3dr_ur10_automap.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

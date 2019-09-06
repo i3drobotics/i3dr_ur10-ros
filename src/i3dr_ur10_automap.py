@@ -163,12 +163,11 @@ class UR10Automap:
 
     def rtabmap_get_map(self):
         try:
-            rospy.wait_for_service('/'+self.rtabmap_namespace+'/get_map', timeout=2)
-            srv_get_map = rospy.ServiceProxy('/'+self.rtabmap_namespace+'/get_map', GetMap)
-            get_map = GetMapRequest(True,True,False)
-            print(get_map)
+            rospy.wait_for_service('/'+self.rtabmap_namespace+'/get_map_data', timeout=2)
+            srv_get_map = rospy.ServiceProxy('/'+self.rtabmap_namespace+'/get_map_data', GetMap)
+            req = GetMapRequest(True,True,False)
             # request map and wait for response
-            resp = srv_get_map(get_map)
+            resp = srv_get_map(req)
         except rospy.ServiceException, e:
             rospy.logerr("Service call failed: %s",e)
         except rospy.ROSException, e:
@@ -259,11 +258,13 @@ class UR10Automap:
     # ------------------------------------- #
 
     def handle_i3dr_scan_send_map(self,req):
-        #self.rtabmap_get_map() #TODO fix issue with get map (md5sum)
+        print("request to send latest map")
+        self.rtabmap_get_map() #TODO fix issue with get map (md5sum)
         if (self.rtabmap_cloud):
             self.pub_i3dr_scan_map.publish(self.rtabmap_cloud)
         else:
             rospy.logerr("Unable to send map. No data found in map!")
+        return EmptyResponse()
 
     def handle_i3dr_scan_next_pose(self,req):
         self.ur_move_cancel()
