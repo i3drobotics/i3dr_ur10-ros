@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 
 <launch>
-    <arg name="rviz" default="true" />
+    <arg name="rviz" default="false" />
     <arg name="gui" default="true"/>
     <arg name="camera_namespace" default="phobos_nuclear"/>
     <arg name="camera_model" default="$(arg camera_namespace)"/>
     <arg name="split_laser" default="false"/>
+    <arg name="ur_en" default="true" doc="connect to a run the ur10. Disable if this is running in another node" />
 
     <arg name="robot_ip" default="192.168.1.164"/>
     
-    <include file="$(find ur_modern_driver)/launch/ur10_bringup.launch">
+    <include if="$(arg ur_en)" file="$(find ur_modern_driver)/launch/ur10_bringup.launch">
         <arg name="robot_ip" value="$(arg robot_ip)"/>
     </include>
 
@@ -28,6 +29,8 @@
         <remap from="depth" to="$(arg camera_namespace)/depth"/>
         <remap from="left/camera_info" to="$(arg camera_namespace)/left/camera_info"/>
         <remap from="left/depth_camera_info" to="$(arg camera_namespace)/left/camera_info"/>
+        <remap from="i3dr_scan_map" to="$(arg camera_namespace)/i3dr_scan_map"/>
+        <remap from="i3dr_scan_status" to="$(arg camera_namespace)/i3dr_scan_status"/>
     </node>
 
     <node if="$(arg gui)" name="i3dr_ur10_scan_gui" pkg="i3dr_ur10" type="i3dr_ur10_scan_gui.py" output="screen">
@@ -38,7 +41,7 @@
  
     <!-- DISPLAY -->
     <!-- run rviz with config file -->
-    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
+    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="$(anon rivz)" 
         args="-d $(find i3dr_ur10)/rviz/ur10_sbri.rviz">
     </node>
 </launch>
