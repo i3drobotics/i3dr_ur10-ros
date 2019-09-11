@@ -66,6 +66,10 @@ class UR10Automap:
         self.ur10_pose_pause = rospy.get_param('~ur10_pose_pause', 0)
         self.rtabmap_namespace = rospy.get_param(
             '~rtabmap_namespace', "rtabmap")
+        #TODO remove this when routine loading from yaml is setup
+        self.routine = rospy.get_param('~routine',"bottom")
+        #TODO load rountine from yaml instead of hard coded
+        self.routine_info = rospy.get_param('~routine_info')
 
         self.rgb_topic = "left/image_rect"
         self.depth_topic = "depth"
@@ -94,18 +98,24 @@ class UR10Automap:
         self.pub_i3dr_scan_status = rospy.Publisher(
             'i3dr_scan_status', String, queue_size=self.queue_size)
 
-        # setup joints for map
-        self.joints_home = [0, -70, -80, -120, 90, -90]
+        if (self.routine == "bottom_rov_mount"):
+          # setup joints for map
+          self.joints_home = [0, -70, -80, -120, 90, -90]
 
-        self.SCAN_JOINTS.append(self.joints_home)
-        wrist_angle_home = self.joints_home[5]
-        move_angle = 5
-        for j in range(wrist_angle_home, wrist_angle_home+90, move_angle):
-            self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
-        for j in range(wrist_angle_home+90, wrist_angle_home-90, -move_angle):
-            self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
-        for j in range(wrist_angle_home-90, wrist_angle_home, move_angle):
-            self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+          self.SCAN_JOINTS.append(self.joints_home)
+          wrist_angle_home = self.joints_home[5]
+          move_angle = 5
+          for j in range(wrist_angle_home, wrist_angle_home+90, move_angle):
+              self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+          for j in range(wrist_angle_home+90, wrist_angle_home-90, -move_angle):
+              self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+          for j in range(wrist_angle_home-90, wrist_angle_home, move_angle):
+              self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+        elif (self.routine == "top"):
+          self.joints_home = [0, 0, 0, 0, 0, 0]
+          self.SCAN_JOINTS.append(self.joints_home)
+          #TODO add joints here for top routine
+          self.SCAN_JOINTS.append([0, 0, 0, 0, 0, 0])
 
         self.client = actionlib.SimpleActionClient(
             'follow_joint_trajectory', FollowJointTrajectoryAction)
