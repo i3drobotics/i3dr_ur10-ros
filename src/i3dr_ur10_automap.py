@@ -12,6 +12,7 @@ import actionlib
 import rospy
 import time
 import roslib
+import rosparam
 import rosservice
 roslib.load_manifest('ur_driver')
 
@@ -68,8 +69,6 @@ class UR10Automap:
             '~rtabmap_namespace', "rtabmap")
         #TODO remove this when routine loading from yaml is setup
         self.routine = rospy.get_param('~routine',"bottom")
-        #TODO load rountine from yaml instead of hard coded
-        self.routine_info = rospy.get_param('~routine_info')
 
         self.rgb_topic = "left/image_rect"
         self.depth_topic = "depth"
@@ -116,6 +115,19 @@ class UR10Automap:
           self.SCAN_JOINTS.append(self.joints_home)
           #TODO add joints here for top routine
           self.SCAN_JOINTS.append([0, 0, 0, 0, 0, 0])
+        elif (self.routine == "file"):
+          #TODO load routine from yaml instead of hard coded
+          self.routine_yaml_file = rospy.get_param('~routine_info_yaml')
+          self.routine_yaml_data = rosparam.load_file(self.routine_yaml_file)
+          rospy.set_param("joint_params",self.routine_yaml_data)
+          self.routine_info = rospy.get_param('joint_params')[0][0]
+          print(self.routine_info)
+          self.routine_joints = self.routine_info["joints_routine"]
+          print(self.routine_joints)
+          self.joints_home = self.routine_info["joints_home"]
+
+          for r in self.routine_joints:
+            self.SCAN_JOINTS.append(r)
 
         self.client = actionlib.SimpleActionClient(
             'follow_joint_trajectory', FollowJointTrajectoryAction)

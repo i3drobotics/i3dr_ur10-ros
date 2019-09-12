@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
   <node name="testYP" pkg="i3dr_ur10" type="test_yaml_params.py" output="screen">
-    <param name="yaml_file" type="yaml" value="$(find i3dr_ur10)/config/routine_top.yaml"/>
+    <param name="yaml_file" value="$(find i3dr_ur10)/config/routine_top.yaml"/>
   </node>
 </launch>

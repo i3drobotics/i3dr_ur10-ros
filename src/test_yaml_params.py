@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import rosparam
 import rospy
 
 class TestYamlParams:
@@ -12,8 +13,12 @@ class TestYamlParams:
                         disable_signals=True)
         self.ns = rospy.get_namespace()
         self.yaml_file = rospy.get_param('~yaml_file')
-        self.yaml_data = rospy.get_param(self.ns+'joints_home')
+        self.yaml_param_data = rosparam.load_file(self.yaml_file)
+        rospy.set_param("joint_params",self.yaml_param_data)
+        self.yaml_data = rospy.get_param('joint_params')
+        self.yaml_single_data = self.yaml_data[0][0]["joints_home"]
         print(self.yaml_data)
+        print(self.yaml_single_data)
 
     def spin(self, rate_hz):
         rate = rospy.Rate(rate_hz)
