@@ -97,24 +97,35 @@ class UR10Automap:
         self.pub_i3dr_scan_status = rospy.Publisher(
             'i3dr_scan_status', String, queue_size=self.queue_size)
 
-        if (self.routine == "bottom_rov_mount"):
+        if (self.routine == "bottom"):
           # setup joints for map
           self.joints_home = [0, -70, -80, -120, 90, -90]
 
           self.SCAN_JOINTS.append(self.joints_home)
           wrist_angle_home = self.joints_home[5]
-          move_angle = 5
+          move_angle = 10
           for j in range(wrist_angle_home, wrist_angle_home+90, move_angle):
-              self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+              new_joint = self.joints_home
+              new_joint[5] = j
+              self.SCAN_JOINTS.append(new_joint)
           for j in range(wrist_angle_home+90, wrist_angle_home-90, -move_angle):
-              self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+              new_joint = self.joints_home
+              new_joint[5] = j
+              self.SCAN_JOINTS.append(new_joint)
           for j in range(wrist_angle_home-90, wrist_angle_home, move_angle):
-              self.SCAN_JOINTS.append([0, -70, -80, -120, 90, j])
+              new_joint = self.joints_home
+              new_joint[5] = j
+              self.SCAN_JOINTS.append(new_joint)
         elif (self.routine == "top"):
-          self.joints_home = [0, 0, 0, 0, 0, 0]
+          self.joints_home = [-88, 11, -26, 13, 93, 97]
           self.SCAN_JOINTS.append(self.joints_home)
-          #TODO add joints here for top routine
-          self.SCAN_JOINTS.append([0, 0, 0, 0, 0, 0])
+          #joints for top routine
+          wrist_angle_home = self.joints_home[5]
+          move_angle = 10
+          for j in range(wrist_angle_home, wrist_angle_home+90, move_angle):
+              new_joint = self.joints_home
+              new_joint[5] = j
+              self.SCAN_JOINTS.append(new_joint)
         elif (self.routine == "file"):
           #TODO load routine from yaml instead of hard coded
           self.routine_yaml_file = rospy.get_param('~routine_info_yaml')
