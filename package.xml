@@ -26,5 +26,6 @@
   <depend>message_filters</depend>
   <depend>tf</depend>
   <depend>message_generation</depend>
+  <depend>universal_robot</depend>
 
 </package>
