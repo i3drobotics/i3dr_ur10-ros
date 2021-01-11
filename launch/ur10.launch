@@ -3,18 +3,33 @@
 <launch>
     <!-- UR10 control launcher -->
     <arg name="robot_ip" default="10.42.0.238"/>
+    <arg name="sim" default="false"/>
+    <arg name="rviz" default="false"/>
     <arg name="moveit" default="false"/>
+    <arg name="new_gazebo_world" default="true"/>
 
-    <include file="$(find ur_modern_driver)/launch/ur10_bringup.launch">
+    <include if="$(arg sim)" file="$(find i3dr_ur10)/launch/ur10_sim.launch">
+        <arg name="limited" value="true"/>
+        <arg name="new_gazebo_world" value="$(arg new_gazebo_world)"/>
+    </include>
+    <include unless="$(arg sim)" file="$(find ur_bringup)/launch/ur10_bringup.launch">
         <arg name="robot_ip" value="$(arg robot_ip)"/>
     </include>
 
-    <include if="$(arg moveit)" file="$(find ur10_moveit_config)/launch/ur10_moveit_planning_execution.launch">
-        <arg name="limited" value="true"/>
-    </include>
+    <group if="$(arg moveit)">
+        <include file="$(find ur10_moveit_config)/launch/ur10_moveit_planning_execution.launch">
+            <arg name="limited" value="true"/>
+            <arg name="sim" value="$(arg sim)"/>
+        </include>
 
-    <include if="$(arg moveit)" file="$(find ur10_moveit_config)/launch/moveit_rviz.launch">
-        <arg name="config" value="true"/>
-    </include>
+        <include if="$(arg rviz)" file="$(find ur10_moveit_config)/launch/moveit_rviz.launch">
+            <arg name="config" value="true"/>
+        </include>
+    </group>
+
+    <group unless="$(arg moveit)">
+        <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
+            args="-d $(find i3dr_ur10)/rviz/ur10.rviz"/>
+    </group>
 
 </launch>

@@ -4,33 +4,32 @@
     <!-- SETUP ARGUMENTS -->
     <!-- enable/disable functions -->
     <arg name="rviz" default="false" />
-    <arg name="calibrate" default="false"/>
-    <arg name="slam" default="false"/>
-    <arg name="ur10" default="true"/>
-    <arg name="slam_locate" default="false"/>
     <!-- ur10 arguments -->
     <arg name="robot_ip" default="10.42.0.238"/>
+    <arg name="sim" default="false"/>
     <arg name="moveit" default="false"/>
 
     <node pkg="tf" type="static_transform_publisher" name="camera_base_link"
-        args="0 0 0 0 0 0 tool0 deimos_base_link 1000" />
+        args="0 0 0 0 0 0 tool0 i3dr_deimos_base_link 1000" />
 
     <!-- UR10 control launcher -->
-    <include if="$(arg ur10)" file="$(find i3dr_ur10)/launch/ur10.launch">
+    <include file="$(find i3dr_ur10)/launch/ur10.launch">
         <arg name="robot_ip" value="$(arg robot_ip)"/>
+        <arg name="sim" value="$(arg sim)"/>
+        <arg name="rviz" value="false"/>
         <arg name="moveit" value="$(arg moveit)"/>
+        <arg name="new_gazebo_world" value="false"/>
     </include>
 
     <!-- Deimos control launcher -->
     <include file="$(find i3dr_deimos)/launch/deimos.launch">
-        <arg name="calibrate" value="$(arg calibrate)"/>
-        <arg name="slam" value="$(arg slam)"/>
-        <arg name="slam_locate" value="$(arg slam_locate)"/>
+        <arg name="sim" value="$(arg sim)"/>
+        <arg name="new_gazebo_world" value="true"/>
     </include>
 
     <!-- DISPLAY -->
     <!-- run rviz with config file -->
     <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
-        args="-d $(find i3dr_deimos)/rviz/SLAM.rviz"/>
+        args="-d $(find i3dr_ur10)/rviz/ur10_deimos.rviz"/>
 
 </launch>
