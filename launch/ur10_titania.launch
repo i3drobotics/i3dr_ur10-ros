@@ -10,21 +10,22 @@
     <arg name="moveit" default="false"/>
 
     <node pkg="tf" type="static_transform_publisher" name="camera_base_link"
-        args="0 0 0.015 3.14 3.14 1.57 tool0 i3dr_deimos_base_link 1000" />
+        args="0 0 0.038 3.14 3.14 1.57 tool0 i3dr_titania_base_link 1000" />
 
     <!-- UR10 control launcher -->
     <include file="$(find i3dr_ur10)/launch/ur10.launch">
         <arg name="robot_ip" value="$(arg robot_ip)"/>
         <arg name="sim" value="$(arg sim)"/>
-        <arg name="rviz" value="false"/>
+        <arg name="rviz" value="$(arg rviz)"/>
         <arg name="moveit" value="$(arg moveit)"/>
         <arg name="new_gazebo_world" value="false"/>
     </include>
 
     <!-- Deimos control launcher -->
-    <include file="$(find i3dr_deimos)/launch/deimos.launch">
+    <include file="$(find i3dr_titania)/launch/titania.launch">
         <arg name="sim" value="$(arg sim)"/>
-        <arg name="new_gazebo_world" value="true"/>
+        <arg name="camera_mesh" value="true"/>
+        <!--<arg name="new_gazebo_world" value="true"/>-->
     </include>
 
     <!-- DISPLAY -->
@@ -33,7 +34,7 @@
         args="-d $(find i3dr_ur10)/rviz/ur10_deimos.rviz"/>-->
 
     <node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
-        args="-d $(find i3dr_ur10)/rviz/ur10_deimos.rviz" output="screen">
+        args="-d $(find i3dr_ur10)/rviz/ur10_titania.rviz" output="screen">
         <rosparam command="load" file="$(find ur10_moveit_config)/config/kinematics.yaml"/>
     </node>
 
