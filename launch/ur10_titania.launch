@@ -9,24 +9,48 @@
     <arg name="sim" default="false"/>
     <arg name="moveit" default="false"/>
 
-    <node pkg="tf" type="static_transform_publisher" name="camera_base_link"
-        args="0 0 0.038 3.14 3.14 1.57 tool0 i3dr_titania_base_link 1000" />
+    <arg name="imu" default="false"/>
+    <arg name="camera_mesh" default="true"/>
+    <arg name="camera_name" default="i3dr_titania"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find i3dr_ur10)/worlds/test.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find i3dr_ur10)/urdf/titania_ur10.urdf.xacro' "/>
+    <node name="robot_state_publisher_titania_ur10" pkg="robot_state_publisher" type="state_publisher">
+        <remap from="robot_description" to="robot_description"/>
+    </node>
+    <node name="titania_ur10_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-urdf -param robot_description -model titania_ur10" />
+    
+    <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
+    <!-- start this controller -->
+    <rosparam file="$(find ur_gazebo)/controller/arm_controller_ur10.yaml" command="load"/>
+    <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
+
+    <!-- load other controllers -->
+    <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller" />
 
     <!-- UR10 control launcher -->
-    <include file="$(find i3dr_ur10)/launch/ur10.launch">
+    <!--<include file="$(find i3dr_ur10)/launch/ur10.launch">
         <arg name="robot_ip" value="$(arg robot_ip)"/>
         <arg name="sim" value="$(arg sim)"/>
         <arg name="rviz" value="$(arg rviz)"/>
         <arg name="moveit" value="$(arg moveit)"/>
         <arg name="new_gazebo_world" value="false"/>
-    </include>
+    </include>-->
 
     <!-- Deimos control launcher -->
-    <include file="$(find i3dr_titania)/launch/titania.launch">
+    <!--<include file="$(find i3dr_titania)/launch/titania.launch">
         <arg name="sim" value="$(arg sim)"/>
         <arg name="camera_mesh" value="true"/>
-        <!--<arg name="new_gazebo_world" value="true"/>-->
-    </include>
+    </include>-->
 
     <!-- DISPLAY -->
     <!-- run rviz with config file -->
