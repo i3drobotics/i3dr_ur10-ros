@@ -22,7 +22,7 @@
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find i3dr_ur10)/worlds/test.world"/>
-        <arg name="paused" value="false"/>
+        <arg name="paused" value="true"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>
         <arg name="recording" value="false"/>
@@ -44,7 +44,7 @@
 
     <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller" />
 
-    <!-- Deimos control launcher -->
+    <!-- Camera control launcher -->
     <include file="$(find i3dr_titania)/launch/titania.launch">
         <arg name="sim" value="false"/> <!-- simulated camera urdf is loaded from this launcher -->
         <arg name="real" value="$(eval sim == 0)"/> <!-- launch real camera when sim=false -->
