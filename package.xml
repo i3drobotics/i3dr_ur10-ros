@@ -27,5 +27,6 @@
   <depend>tf</depend>
   <depend>message_generation</depend>
   <depend>universal_robot</depend>
+  <depend>moveit</depend>
 
 </package>

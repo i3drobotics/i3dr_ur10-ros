@@ -3,11 +3,11 @@
 Copyright (c) 2019, I3D Robotics Ltd.
 -->
 
-<robot name="titania_ur10" 
+<robot name="i3dr_titania_ur10" 
     xmlns:xacro="http://wiki.ros.org/xacro">
 
     <xacro:arg name="en_imu" default="false"/>
-    <xacro:arg name="camera_name" default="titania"/>
+    <xacro:arg name="camera_name" default="i3dr_titania"/>
     <xacro:arg name="en_mesh" default="true"/>
 
     <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
@@ -38,8 +38,8 @@ Copyright (c) 2019, I3D Robotics Ltd.
     </joint>
 
     <joint name="ur10_titania_joint" type="fixed">
-        <origin xyz="0 0 0.035" rpy="3.14 3.14 1.57" />
-        <parent link="tool0" />
+        <origin xyz="0.0385 0 0" rpy="0 0 1.57" />
+        <parent link="ee_link" />
         <child link="$(arg camera_name)_base_link" />
     </joint>
 </robot>

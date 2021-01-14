@@ -6,12 +6,19 @@
     <arg name="rviz" default="false" />
     <!-- ur10 arguments -->
     <arg name="robot_ip" default="10.42.0.238"/>
-    <arg name="sim" default="false"/>
-    <arg name="moveit" default="false"/>
+    <arg name="sim" default="true"/>
+    <arg name="moveit" default="true"/>
 
     <arg name="imu" default="false"/>
     <arg name="camera_mesh" default="true"/>
     <arg name="camera_name" default="i3dr_titania"/>
+
+    <group if="$(arg moveit)">
+        <include file="$(find ur10_moveit_config)/launch/ur10_moveit_planning_execution.launch">
+            <arg name="limited" value="true"/>
+            <arg name="sim" value="$(arg sim)"/>
+        </include>
+    </group>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find i3dr_ur10)/worlds/test.world"/>
@@ -22,7 +29,7 @@
         <arg name="debug" value="false"/>
     </include>
 
-    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find i3dr_ur10)/urdf/titania_ur10.urdf.xacro' "/>
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find i3dr_ur10)/urdf/i3dr_titania_ur10.urdf.xacro' en_imu:=$(arg imu) camera_name:=$(arg camera_name) en_mesh:=$(arg camera_mesh)"/>
     <node name="robot_state_publisher_titania_ur10" pkg="robot_state_publisher" type="state_publisher">
         <remap from="robot_description" to="robot_description"/>
     </node>
@@ -30,32 +37,20 @@
         args="-urdf -param robot_description -model titania_ur10" />
     
     <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
-    <!-- start this controller -->
+
     <rosparam file="$(find ur_gazebo)/controller/arm_controller_ur10.yaml" command="load"/>
     <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
 
-    <!-- load other controllers -->
+
     <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller" />
 
-    <!-- UR10 control launcher -->
-    <!--<include file="$(find i3dr_ur10)/launch/ur10.launch">
-        <arg name="robot_ip" value="$(arg robot_ip)"/>
-        <arg name="sim" value="$(arg sim)"/>
-        <arg name="rviz" value="$(arg rviz)"/>
-        <arg name="moveit" value="$(arg moveit)"/>
-        <arg name="new_gazebo_world" value="false"/>
-    </include>-->
-
     <!-- Deimos control launcher -->
-    <!--<include file="$(find i3dr_titania)/launch/titania.launch">
-        <arg name="sim" value="$(arg sim)"/>
-        <arg name="camera_mesh" value="true"/>
-    </include>-->
-
-    <!-- DISPLAY -->
-    <!-- run rviz with config file -->
-    <!--<node if="$(arg rviz)" pkg="rviz" type="rviz" name="rivz" 
-        args="-d $(find i3dr_ur10)/rviz/ur10_deimos.rviz"/>-->
+    <include file="$(find i3dr_titania)/launch/titania.launch">
+        <arg name="sim" value="false"/> <!-- simulated camera urdf is loaded from this launcher -->
+        <arg name="real" value="$(eval sim == 0)"/> <!-- launch real camera when sim=false -->
+        <arg name="camera_mesh" value="true"/> <!-- display detailed mesh of camera -->
+        <arg name="state_publisher" value="false"/> <!-- state publisher is handelled by this launcher instead-->
+    </include>
 
     <node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
         args="-d $(find i3dr_ur10)/rviz/ur10_titania.rviz" output="screen">
