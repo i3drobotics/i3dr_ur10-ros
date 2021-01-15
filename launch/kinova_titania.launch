@@ -6,6 +6,7 @@
     <arg name="rviz" default="false" />
     <arg name="sim" default="true"/>
     <arg name="moveit" default="true"/>
+    <arg name="glue" default="true"/>
 
     <arg name="imu" default="false"/>
     <arg name="camera_mesh" default="true"/>
@@ -17,7 +18,7 @@
 
     <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find i3dr_ur10)/worlds/test.world"/>
+        <arg name="world_name" value="$(find i3dr_ur10)/worlds/room.world"/>
         <arg name="debug" value="false" />
         <arg name="gui" value="true" />
         <arg name="paused" value="true"/>
@@ -69,7 +70,24 @@
         <arg name="real" value="$(eval sim == 0)"/> <!-- launch real camera when sim=false -->
         <arg name="camera_mesh" value="true"/> <!-- display detailed mesh of camera -->
         <arg name="state_publisher" value="false"/> <!-- state publisher is handelled by this launcher instead-->
+        <arg name="depth_max" value="10"/>
+        <arg name="stereo_algorithm" value="1"/>
     </include>
+
+    <group if="$(arg glue)">
+        <node name="pcl_point_tf" pkg="i3dr_pcl_tools" type="transform_pcl_frame" output="screen" >
+            <param name="tf" type="string" value="world" />
+            <param name="pcl2_input" type="string" value="/$(arg camera_name)/points2" />
+            <param name="pcl2_output" type="string" value="/$(arg camera_name)/world_points2" />
+            <param name="pcl_output" type="string" value="/$(arg camera_name)/world_points" />
+        </node>
+        <node name="pcl_map" pkg="i3dr_pcl_tools" type="pcl_map" output="screen" >
+            <param name="resolution" type="double" value="0.01" />
+            <param name="pcl2_input" type="string" value="/$(arg camera_name)/world_points2" />
+        <param name="pcl2_output" type="string" value="/$(arg camera_name)/map_points2" />
+        <param name="pcl_output" type="string" value="/$(arg camera_name)/map_points" />
+        </node>
+    </group>
 
     <group if="$(arg moveit)">
         <include file="$(find j2s7s300_moveit_config)/launch/move_group_$(arg kinova_robotType).launch">

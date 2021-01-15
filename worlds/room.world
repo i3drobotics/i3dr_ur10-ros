@@ -1,0 +1,287 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    <scene>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+    </scene>
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>12.0112 -3.12408 7.17558 0 0.517795 2.73981</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <model name='cyberzoo_model'>
+      <static>1</static>
+      <pose frame=''>0.610159 0.500581 0 0 -0 0</pose>
+      <link name='cyberzoo_link'>
+        <visual name='floor'>
+          <pose frame=''>-5 -5 0.01 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_floor.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='floor_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>10 10 0.02</size>
+            </box>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='poles'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_poles.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://cyberzoo/cyberzoo_poles</uri>
+              <name>Cyberzoo/Poles</name>
+            </script>
+          </material>
+          <meta>
+            <layer>0</layer>
+          </meta>
+        </visual>
+        <visual name='wires'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_wires.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <meta>
+            <layer>0</layer>
+          </meta>
+        </visual>
+        <visual name='cams'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_cams.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <meta>
+            <layer>0</layer>
+          </meta>
+        </visual>
+        <visual name='lighting'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_lighting.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <meta>
+            <layer>0</layer>
+          </meta>
+        </visual>
+        <visual name='glow'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_lighting_glow.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://cyberzoo/cyberzoo_lighting_glow</uri>
+              <name>Cyberzoo/Glow</name>
+            </script>
+          </material>
+          <meta>
+            <layer>0</layer>
+          </meta>
+        </visual>
+        <visual name='walls'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_walls.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <meta>
+            <layer>1</layer>
+          </meta>
+        </visual>
+        <visual name='net'>
+          <pose frame=''>-5 -5 0 0 -0 0</pose>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_net.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://cyberzoo/cyberzoo_net</uri>
+              <name>Cyberzoo/Net</name>
+            </script>
+          </material>
+          <meta>
+            <layer>1</layer>
+          </meta>
+        </visual>
+        <visual name='surroundings'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_surroundings.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <meta>
+            <layer>2</layer>
+          </meta>
+        </visual>
+        <visual name='toolcart'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_toolcart.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://cyberzoo/cyberzoo_toolcart</uri>
+              <name>Cyberzoo/Toolcart</name>
+            </script>
+          </material>
+          <meta>
+            <layer>2</layer>
+          </meta>
+        </visual>
+        <visual name='outer_walls'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://cyberzoo/cyberzoo_outer_walls.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <meta>
+            <layer>3</layer>
+          </meta>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+    </model>
+    <!-- A sphere -->
+    <model name="sphere1">
+      <pose>0.8 1.7 0.25 0 0 0</pose>
+      <link name="sphere_body">
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1.0</mass>
+        </inertial>
+        <collision name="geom">
+          <geometry>
+            <sphere>
+              <radius>0.25</radius>
+            </sphere>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <sphere>
+              <radius>0.25</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Grass</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <static>true</static>
+    </model>
+    <model name="sphere2">
+      <pose>-0.6 1.8 0.2 0 0 0</pose>
+      <link name="sphere_body">
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1.0</mass>
+        </inertial>
+        <collision name="geom">
+          <geometry>
+            <sphere>
+              <radius>0.2</radius>
+            </sphere>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <sphere>
+              <radius>0.2</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Grass</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <static>true</static>
+    </model>
+  </world>
+</sdf>
