@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--XML-->
+<launch>
+    <arg name="camera_name" default="i3dr_titania"/>
+    <arg name="glue" default="true"/>
+    <arg name="octomap" default="false"/>
+
+    <node name="pcl_point_tf" pkg="i3dr_pcl_tools" type="transform_pcl_frame" output="screen" >
+        <param name="tf" type="string" value="world" />
+        <param name="pcl2_input" type="string" value="/$(arg camera_name)/points2" />
+        <param name="pcl2_output" type="string" value="/$(arg camera_name)/world_points2" />
+        <param name="pcl_output" type="string" value="/$(arg camera_name)/world_points" />
+    </node>
+
+    <node if="$(arg glue)" name="pcl_map" pkg="i3dr_pcl_tools" type="pcl_map" output="screen" >
+        <param name="resolution" type="double" value="0.01" />
+        <param name="pcl2_input" type="string" value="/$(arg camera_name)/world_points2" />
+        <param name="pcl2_output" type="string" value="/$(arg camera_name)/map_points2" />
+        <param name="pcl_output" type="string" value="/$(arg camera_name)/map_points" />
+    </node>
+
+    <node if="$(arg octomap)" pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+        <param name="resolution" value="0.05" />
+
+        <!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+        <param name="frame_id" type="string" value="/world" />
+
+        <!-- maximum range to integrate (speedup!) -->
+        <param name="sensor_model/max_range" value="10" />
+
+        <!-- data source to integrate (PointCloud2) -->
+        <remap from="cloud_in" to="/$(arg camera_name)/world_points2" />
+    </node>
+
+</launch>

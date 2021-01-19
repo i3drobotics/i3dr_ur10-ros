@@ -6,7 +6,8 @@
     <arg name="rviz" default="false" />
     <arg name="sim" default="true"/>
     <arg name="moveit" default="true"/>
-    <arg name="glue" default="true"/>
+    <arg name="glue" default="false"/>
+    <arg name="octomap" default="false"/>
 
     <arg name="imu" default="false"/>
     <arg name="camera_mesh" default="true"/>
@@ -71,7 +72,7 @@
         <arg name="camera_mesh" value="true"/> <!-- display detailed mesh of camera -->
         <arg name="state_publisher" value="false"/> <!-- state publisher is handelled by this launcher instead-->
         <arg name="depth_max" value="10"/>
-        <arg name="stereo_algorithm" value="1"/>
+        <arg name="stereo_algorithm" value="2"/>
     </include>
 
     <group if="$(arg glue)">
@@ -86,6 +87,27 @@
             <param name="pcl2_input" type="string" value="/$(arg camera_name)/world_points2" />
         <param name="pcl2_output" type="string" value="/$(arg camera_name)/map_points2" />
         <param name="pcl_output" type="string" value="/$(arg camera_name)/map_points" />
+        </node>
+    </group>
+
+    <group if="$(arg octomap)">
+        <node name="pcl_point_tf" pkg="i3dr_pcl_tools" type="transform_pcl_frame" output="screen" >
+            <param name="tf" type="string" value="world" />
+            <param name="pcl2_input" type="string" value="/$(arg camera_name)/points2" />
+            <param name="pcl2_output" type="string" value="/$(arg camera_name)/world_points2" />
+            <param name="pcl_output" type="string" value="/$(arg camera_name)/world_points" />
+        </node>
+        <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+            <param name="resolution" value="0.01" />
+
+            <!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+            <param name="frame_id" type="string" value="/world" />
+
+            <!-- maximum range to integrate (speedup!) -->
+            <param name="sensor_model/max_range" value="5" />
+
+            <!-- data source to integrate (PointCloud2) -->
+            <remap from="cloud_in" to="/$(arg camera_name)/world_points2" />
         </node>
     </group>
 

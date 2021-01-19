@@ -19,197 +19,35 @@
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
-    <model name='cyberzoo_model'>
-      <static>1</static>
-      <pose frame=''>0.610159 0.500581 0 0 -0 0</pose>
-      <link name='cyberzoo_link'>
-        <visual name='floor'>
-          <pose frame=''>-5 -5 0.01 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_floor.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-        </visual>
-        <collision name='floor_collision'>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <box>
-              <size>10 10 0.02</size>
-            </box>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='poles'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_poles.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://cyberzoo/cyberzoo_poles</uri>
-              <name>Cyberzoo/Poles</name>
-            </script>
-          </material>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <visual name='wires'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_wires.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <visual name='cams'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_cams.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <visual name='lighting'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_lighting.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <visual name='glow'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_lighting_glow.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://cyberzoo/cyberzoo_lighting_glow</uri>
-              <name>Cyberzoo/Glow</name>
-            </script>
-          </material>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <visual name='walls'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_walls.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <meta>
-            <layer>1</layer>
-          </meta>
-        </visual>
-        <visual name='net'>
-          <pose frame=''>-5 -5 0 0 -0 0</pose>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_net.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://cyberzoo/cyberzoo_net</uri>
-              <name>Cyberzoo/Net</name>
-            </script>
-          </material>
-          <meta>
-            <layer>1</layer>
-          </meta>
-        </visual>
-        <visual name='surroundings'>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_surroundings.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <meta>
-            <layer>2</layer>
-          </meta>
-        </visual>
-        <visual name='toolcart'>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_toolcart.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://cyberzoo/cyberzoo_toolcart</uri>
-              <name>Cyberzoo/Toolcart</name>
-            </script>
-          </material>
-          <meta>
-            <layer>2</layer>
-          </meta>
-        </visual>
-        <visual name='outer_walls'>
-          <cast_shadows>0</cast_shadows>
-          <geometry>
-            <mesh>
-              <uri>model://cyberzoo/cyberzoo_outer_walls.dae</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <meta>
-            <layer>3</layer>
-          </meta>
-        </visual>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-      </link>
-    </model>
+    <include>
+      <uri>model://cyberzoo</uri>
+      <pose>0 0 0 0 0 0.454</pose>
+    </include>
+    <include>
+      <uri>model://traffic_mat</uri>
+      <name>traffic_mat1</name>
+      <pose>-1.57 -2.16 0 0 0 1.62</pose>
+    </include>
+    <include>
+      <uri>model://traffic_mat</uri>
+      <name>traffic_mat2</name>
+      <pose>-2.09 1.44 0 0 0 1.99</pose>
+    </include>
+    <include>
+      <uri>model://traffic_mat</uri>
+      <name>traffic_mat3</name>
+      <pose>1.14 1.29 0 0 0 3.75</pose>
+    </include>
+    <include>
+      <uri>model://metal_panel1</uri>
+      <name>metal_panel1_1</name>
+      <pose>-1.127470 -1.966387 0 0 0 2.261660</pose>
+    </include>
+    <include>
+      <uri>model://metal_panel2</uri>
+      <name>metal_panel2_1</name>
+      <pose>2.447252 -0.715091 0 0 0 1.411153</pose>
+    </include>
     <!-- A sphere -->
     <model name="sphere1">
       <pose>0.8 1.7 0.25 0 0 0</pose>
