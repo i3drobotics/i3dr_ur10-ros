@@ -31,5 +31,6 @@
   <depend>kinova_description</depend>
   <depend>j2s7s300_moveit_config</depend>
   <depend>moveit</depend>
+  <depend>trac_ik_kinematics_plugin</depend>
 
 </package>
