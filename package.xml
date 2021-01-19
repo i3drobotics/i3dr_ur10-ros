@@ -29,7 +29,7 @@
   <depend>universal_robot</depend>
   <depend>kinova_gazebo</depend>
   <depend>kinova_description</depend>
-  <depend>kinova_moveit</depend>
+  <depend>j2s7s300_moveit_config</depend>
   <depend>moveit</depend>
 
 </package>
