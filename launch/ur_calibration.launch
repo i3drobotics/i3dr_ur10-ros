@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="robot_ip" default="172.16.1.59"/>
+    <arg name="robot_name" default="wallace"/>
+
+    <include file="$(find ur_calibration)/launch/calibration_correction.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)"/>
+        <arg name="target_filename" value="$(find i3dr_ur10)/calib/$(arg robot_name)_robot_calibration.yaml"/>
+    </include>
+
+</launch>
