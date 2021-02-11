@@ -6,7 +6,3 @@
     local-name: i3dr_ur10-ros
     uri: https://github.com/i3drobotics/i3dr_ur10-ros.git
     version: master
-- git:
-    local-name: kinova-ros
-    uri: https://github.com/Kinovarobotics/kinova-ros.git
-    version: master

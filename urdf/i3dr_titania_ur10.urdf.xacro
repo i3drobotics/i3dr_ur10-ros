@@ -34,7 +34,7 @@ Copyright (c) 2019, I3D Robotics Ltd.
     <joint name="world_joint" type="fixed">
         <parent link="world" />
         <child link = "base_link" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 0.01" rpy="0 0 0" />
     </joint>
 
     <joint name="ur10_titania_joint" type="fixed">

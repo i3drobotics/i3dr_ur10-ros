@@ -8,6 +8,8 @@
     <arg name="robot_ip" default="10.42.0.238"/>
     <arg name="sim" default="true"/>
     <arg name="moveit" default="true"/>
+    <arg name="glue" default="false"/>
+    <arg name="octomap" default="false"/>
 
     <arg name="imu" default="false"/>
     <arg name="camera_mesh" default="true"/>
@@ -21,8 +23,8 @@
     </group>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find i3dr_ur10)/worlds/test.world"/>
-        <arg name="paused" value="true"/>
+        <arg name="world_name" value="$(find i3dr_ur10)/worlds/room.world"/>
+        <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="true"/>
         <arg name="recording" value="false"/>
@@ -34,7 +36,7 @@
         <remap from="robot_description" to="robot_description"/>
     </node>
     <node name="titania_ur10_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param robot_description -model titania_ur10" />
+        args="-urdf -param robot_description -model i3dr_titania_ur10" />
     
     <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
 
@@ -50,11 +52,57 @@
         <arg name="real" value="$(eval sim == 0)"/> <!-- launch real camera when sim=false -->
         <arg name="camera_mesh" value="true"/> <!-- display detailed mesh of camera -->
         <arg name="state_publisher" value="false"/> <!-- state publisher is handelled by this launcher instead-->
+        <arg name="depth_max" value="10"/>
+        <arg name="stereo_algorithm" value="0"/>
     </include>
 
-    <node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
-        args="-d $(find i3dr_ur10)/rviz/ur10_titania.rviz" output="screen">
-        <rosparam command="load" file="$(find ur10_moveit_config)/config/kinematics.yaml"/>
-    </node>
+    <group if="$(arg glue)">
+        <node name="pcl_point_tf" pkg="i3dr_pcl_tools" type="transform_pcl_frame" output="screen" >
+            <param name="tf" type="string" value="world" />
+            <param name="pcl2_input" type="string" value="/$(arg camera_name)/points2" />
+            <param name="pcl2_output" type="string" value="/$(arg camera_name)/world_points2" />
+            <param name="pcl_output" type="string" value="/$(arg camera_name)/world_points" />
+        </node>
+        <node name="pcl_map" pkg="i3dr_pcl_tools" type="pcl_map" output="screen" >
+            <param name="resolution" type="double" value="0.01" />
+            <param name="pcl2_input" type="string" value="/$(arg camera_name)/world_points2" />
+        <param name="pcl2_output" type="string" value="/$(arg camera_name)/map_points2" />
+        <param name="pcl_output" type="string" value="/$(arg camera_name)/map_points" />
+        </node>
+    </group>
+
+    <group if="$(arg octomap)">
+        <node name="pcl_point_tf" pkg="i3dr_pcl_tools" type="transform_pcl_frame" output="screen" >
+            <param name="tf" type="string" value="world" />
+            <param name="pcl2_input" type="string" value="/$(arg camera_name)/points2" />
+            <param name="pcl2_output" type="string" value="/$(arg camera_name)/world_points2" />
+            <param name="pcl_output" type="string" value="/$(arg camera_name)/world_points" />
+        </node>
+        <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+            <param name="resolution" value="0.01" />
+
+            <!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+            <param name="frame_id" type="string" value="/world" />
+
+            <!-- maximum range to integrate (speedup!) -->
+            <param name="sensor_model/max_range" value="5" />
+
+            <!-- data source to integrate (PointCloud2) -->
+            <remap from="cloud_in" to="/$(arg camera_name)/world_points2" />
+        </node>
+    </group>
+
+    <group if="$(arg moveit)">
+        <node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
+            args="-d $(find i3dr_ur10)/rviz/ur10_titania.rviz" output="screen">
+            <rosparam command="load" file="$(find ur10_moveit_config)/config/kinematics.yaml"/>
+        </node>
+    </group>
+
+    <group unless="$(arg moveit)">
+        <node if="$(arg rviz)" name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
+            args="-d $(find i3dr_ur10)/rviz/ur10_titania.rviz" output="screen">
+        </node>
+    </group>
 
 </launch>
