@@ -26,11 +26,7 @@
   <depend>message_filters</depend>
   <depend>tf</depend>
   <depend>message_generation</depend>
-  <depend>universal_robot</depend>
-  <depend>kinova_gazebo</depend>
-  <depend>kinova_description</depend>
-  <depend>j2s7s300_moveit_config</depend>
   <depend>moveit</depend>
-  <depend>trac_ik_kinematics_plugin</depend>
+  <depend>ur_robot_driver</depend>
 
 </package>
