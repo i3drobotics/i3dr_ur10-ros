@@ -13,7 +13,7 @@ Copyright (c) 2019, I3D Robotics Ltd.
     <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
 
     <xacro:include filename="$(find i3dr_titania)/urdf/titania.urdf.xacro" />
-    <xacro:titania_camera camera_name="$(arg camera_name)" en_mesh="$(arg en_mesh)" en_imu="$(arg en_imu)"/>
+    <xacro:titania_camera camera_name="$(arg camera_name)" en_mesh="$(arg en_mesh)" en_imu="$(arg en_imu)" en_collision="true" />
 
     <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
 
