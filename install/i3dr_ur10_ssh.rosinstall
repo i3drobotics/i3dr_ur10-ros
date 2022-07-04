@@ -1,11 +1,11 @@
 - git:
     local-name: i3dr_stereo_camera-ros
     uri: git@github.com:i3drobotics/i3dr_stereo_camera-ros.git
-    version: master
+    version: main
 - git:
     local-name: i3dr_ur10-ros
     uri: git@github.com:i3drobotics/i3dr_ur10-ros.git
-    version: master
+    version: main
 - git:
     local-name: Universal_Robots_ROS_Driver
     uri: git@github.com:UniversalRobots/Universal_Robots_ROS_Driver.git
